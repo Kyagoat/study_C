@@ -18,10 +18,44 @@ int main(int argc, char const *argv[])
     green = 0;
     blue = 0;
 
-    snprintf(buf, 255, "%d %d %d ", red, green, blue); // put ints in buf
+    snprintf(buf, 255, "%3d %3d %3d ", red, green, blue); // put ints in buf
     write(fd, buf, strlen(buf)); // Write buf to file
 
-    // TODO: A completer
+    red = 0;
+    green = 255;
+    blue = 0;
+
+    snprintf(buf, 255, " %3d %3d %3d ", red, green, blue);
+    write(fd, buf, strlen(buf));
+
+    red = 0;
+    green = 0;
+    blue = 255;
+
+    snprintf(buf, 255, " %3d %3d %3d \n", red, green, blue);
+    write(fd, buf, strlen(buf));
+
+    red = 255;
+    green = 255;
+    blue = 0;
+
+    snprintf(buf, 255, "%3d %3d %3d ", red, green, blue);
+    write(fd, buf, strlen(buf));
+
+    red = 255;
+    green = 255;
+    blue = 255;
+
+    snprintf(buf, 255, " %3d %3d %3d ", red, green, blue);
+    write(fd, buf, strlen(buf));
+
+    red = 0;
+    green = 0;
+    blue = 0;
+
+    snprintf(buf, 255, " %3d %3d %3d \n", red, green, blue);
+    write(fd, buf, strlen(buf));
+
 
     write(fd, "\n", 1);
 
