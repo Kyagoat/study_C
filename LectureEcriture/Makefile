@@ -1,6 +1,9 @@
 CC = gcc
 CLFLAGS = -Wall -Wextra
 
+darker : darker.c
+	$(CC) $(CLFLAGS) -o darker darker.c 
+
 copy : copy.c
 	$(CC) $(CLFLAGS) -o copy copy.c 
 
@@ -11,4 +14,4 @@ firstPPM : firstPPM.c
 	$(CC) $(CLFLAGS) -o firstPPM firstPPM.c 
 
 clean:
-	rm -f firstPPM gradient copy
+	rm -f firstPPM gradient copy darker
