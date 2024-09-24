@@ -12,25 +12,24 @@ int main(int argc, char const *argv[]){
     write(fd, en_tete, strlen(en_tete));
 
     char buf[255];
-    int red, green, blue;
+    int blue;
 
-    red = 0;
-    green = 0;
-    blue = 255;
+    
 
     snprintf(buf, 255, "%ld \n", sizeof(buf));
     write(fd, buf, strlen(buf));
 
 
-    for(int i=0; i<=200; i++){
-        for(int j=0; j<=100; j++){
-            snprintf(buf, 255, "%d %d %d ", red, green, blue);
+    for(int i=0; i<100; i++){
+        for(int j=0; j<200; j++){
+            blue = (j * 255) / 99;
+            snprintf(buf, 255, "%d %d %d ", 0, 0, j);
             write(fd, buf, strlen(buf));
         }
-        blue-=1;
+        write(fd, "\n", 1);
     }
 
-    write(fd, "\n", 1);
+    
 
     close(fd); // close the file to free resources
 
