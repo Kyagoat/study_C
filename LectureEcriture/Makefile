@@ -1,6 +1,9 @@
 CC = gcc
 CLFLAGS = -Wall -Wextra
 
+binaryPPM : binaryPPM.c
+	$(CC) $(CLFLAGS) -o binaryPPM binaryPPM.c 
+
 arguments : arguments.c
 	$(CC) $(CLFLAGS) -o arguments arguments.c 
 
@@ -17,4 +20,4 @@ firstPPM : firstPPM.c
 	$(CC) $(CLFLAGS) -o firstPPM firstPPM.c 
 
 clean:
-	rm -f firstPPM gradient copy darker arguments
+	rm -f firstPPM gradient copy darker arguments binaryPPM

@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
       fgets(line, 200, f);
       fprintf(darker, "%s", line);    
    }
-      
+
    
    while(fscanf(f, "%d", &entier) == 1){
       fprintf(darker, "%d\n", entier/6);
