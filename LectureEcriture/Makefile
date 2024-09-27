@@ -1,7 +1,7 @@
 CC = gcc
 CLFLAGS = -Wall -Wextra
 
-all: firstPPM gradient copy darker arguments binaryPPM tunar
+all: firstPPM gradient copy darker arguments binaryPPM tuner
 
 tuner: tuner.c
 	$(CC) $(CLFLAGS) -o tuner tuner.c
