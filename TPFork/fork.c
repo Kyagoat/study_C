@@ -62,6 +62,10 @@ void parent(void)
 /* Actions du processus enfant */
 void enfant(void)
 {
-  printf("Enfant : PID = %d - PPID = %d\n", getpid(), getppid());
+  for (int i = 0; i < 4; i++){
+    printf("Enfant : PID = %d - PPID = %d\n", getpid(), getppid());
+    sleep(1); //nb sec
+  }
+  
 }
 
