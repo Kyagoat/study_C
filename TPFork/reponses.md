@@ -9,7 +9,7 @@ Groupe TP : TP1H
 
 # Exercice 1.1
 
-## Question a :
+## Question a :
 
 PID parent = 44832; PPID enfant = 44832. Le fork fait sur le processus parent s'est bien executé. Le PPID représente le processus père.
 
