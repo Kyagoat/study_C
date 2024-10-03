@@ -8,25 +8,9 @@
 extern int errno;      /* Modifiée en cas d'erreur */
 
 /* Fonctions exécutant le code du parent et de l'enfant */
-//void parent(void);
-//void enfant(void);
-//void enfant2(void);
-
-void parent(void){
-    printf("Parent :  PID = %d - PPID = %d\n", getpid(), getppid());
-    int fils1 = wait(NULL);
-    int fils2 = wait(NULL);
-    printf("Enfant1 : %d ; Enfant2 : %d \n", fils1, fils2);
-    }
-
-/* Actions du processus enfant */
-void enfant(void){
-   printf("Enfant1 : PID = %d \n", getpid());
-    }
-
-void enfant2(void){
-   printf("Enfant2 : PID = %d \n", getpid());
-    }
+void parent(void);
+void enfant(void);
+void enfant2(void);
     
 int main(){
     pid_t child_a, child_b;
@@ -48,6 +32,20 @@ int main(){
             parent();
         }
     }
+}
 
+void parent(void){
+    printf("Parent :  PID = %d - PPID = %d\n", getpid(), getppid());
+    int fils1 = wait(NULL);
+    int fils2 = wait(NULL);
+    printf("Enfant1 : %d ; Enfant2 : %d \n", fils1, fils2);
+}
 
+/* Actions du processus enfant */
+void enfant(void){
+   printf("Enfant1 : PID = %d \n", getpid());
+}
+
+void enfant2(void){
+   printf("Enfant2 : PID = %d \n", getpid());
 }
