@@ -1,8 +1,10 @@
 CC = gcc
 CLFLAGS = -Wall -Wextra
 
-lighter: lighter.c
-	$(CC) $(CLFLAGS) -o lighter lighter.c
+all: firstPPM gradient copy darker arguments binaryPPM tuner
+
+tuner: tuner.c
+	$(CC) $(CLFLAGS) -o tuner tuner.c
 
 binaryPPM : binaryPPM.c
 	$(CC) $(CLFLAGS) -o binaryPPM binaryPPM.c 
@@ -23,4 +25,4 @@ firstPPM : firstPPM.c
 	$(CC) $(CLFLAGS) -o firstPPM firstPPM.c 
 
 clean:
-	rm -f firstPPM gradient copy darker arguments binaryPPM lighter
+	rm -f firstPPM gradient copy darker arguments binaryPPM tuner
