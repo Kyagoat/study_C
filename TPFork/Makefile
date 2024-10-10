@@ -1,7 +1,10 @@
 CC = gcc
 CLFLAGS = -Wall -Wextra
 
-all: fork forkSync forkGlobales forkShared
+all: fork forkSync forkGlobales forkShared forkSharedWait
+
+forkSharedWait: forkSharedWait.c
+	$(CC) $(CLFLAGS) -o forkSharedWait forkSharedWait.c
 
 forkShared: forkShared.c
 	$(CC) $(CLFLAGS) -o forkShared forkShared.c
@@ -16,4 +19,4 @@ fork: fork.c
 	$(CC) $(CLFLAGS) -o fork fork.c
 
 clean:
-	rm -f fork forkSync forkGlobales forkShared
+	rm -f fork forkSync forkGlobales forkShared forkSharedWait

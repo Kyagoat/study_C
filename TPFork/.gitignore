@@ -2,3 +2,4 @@ fork
 forkSync
 forkGlobales
 forkShared
+forkSharedWait
