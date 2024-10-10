@@ -10,7 +10,7 @@ extern int errno;      /* Modifiée en cas d'erreur */
 /* Fonctions exécutant le code du parent et de l'enfant */
 void parent(void);
 void enfant(void);
-int count;
+int count = 434;
 
 /* ---------------------------------------------------------------------------
  * Création d'un processus enfant et exécution d'une fonction particulière
@@ -21,9 +21,6 @@ int main(void)
   pid_t id;
 
   id = fork();
-
-  /* A partir de cette ligne, deux processus exécutent le code en parallèle */
-  printf("Cette ligne va être affichée deux fois\n");
 
   switch (id) {
      case -1:
@@ -41,25 +38,25 @@ int main(void)
         parent();
         
   }
-
   return EXIT_SUCCESS;
 }
 
 
 /* Actions du processus parent, regroupées dans une procédure. */
-void parent(void)
-{
-  printf("Parent :  PID = %d - PPID = %d\n", getpid(), getppid());
-  sleep(1);
+void parent(void){
+  for (int i = 0; i<=200; i++){
+    //count ++;
+    
+  }
+  printf("Parent %d\n",count);
 }
 
 /* Actions du processus enfant */
-void enfant(void)
-{
-  for (int i = 0; i < 4; i++){
-    printf("Enfant : PID = %d - PPID = %d\n", getpid(), getppid());
-    sleep(1); //nb sec
+void enfant(void){
+  for (int i = 0; i<=200; i++){
+    //count ++;
+    
   }
-  
+  printf("Enfant %d\n",count);
 }
 

@@ -41,6 +41,14 @@ Nous pouvons donc voir qu'après la mort du parent le PPID de l'enfant a changé
 
 ## Question a :
 
+Non il n'y a pas d'interferance la variable globale. Chaque processus crée son propre contexte après le Fork(). Lors de l'incrémentation chacun incrément sa propre variable globale.
+
+Avec initialisation de la variable globale à 434.
+
+    ./forkGlobales
+    Parent 434
+    Enfant 434
+
 # Exercice 3, Fichier Partagé :
 
 ## Question a :
