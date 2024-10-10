@@ -70,4 +70,6 @@ Une fois l'enfant crée il accède au même fichier (qui a été stocké en mém
 
 ## Question a :
 
+Non, il n'y a plus de mélanges.
+
 ## Question b :

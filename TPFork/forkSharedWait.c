@@ -15,7 +15,7 @@ int main(void)
 {
   pid_t id;
   id = fork();
-  FILE* sharedFile = fopen("./sharedFile.txt","w");
+  FILE* sharedFile = fopen("./sharedFile.txt","a");
 
   switch (id) {
      case -1:
@@ -23,17 +23,18 @@ int main(void)
         return errno;
 
      case 0:
-        for (int i = 0; i < 1000; i++) {
-            fprintf(sharedFile, "Je suis l'enfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaant !![%d:%d]\n", getpid(), i);
+        for (int i = 0; i < 50; i++) {
+            fprintf(sharedFile, "%d - Je suis l'enfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaant !!\n",i);
             fflush(sharedFile);
             }
         return EXIT_SUCCESS;  
         break;
 
      default:
+        wait(NULL);
         usleep(100);
-        for (int i = 0; i < 1000; i++) {
-            fprintf(sharedFile, "Je suis le peeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere !![%d:%d]\n", getpid(), i);
+        for (int i = 0; i < 50; i++) {
+            fprintf(sharedFile, "%d - Je suis le peeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere !!\n",i);
             fflush(sharedFile);
         }
     }
