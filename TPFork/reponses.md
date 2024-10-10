@@ -53,8 +53,16 @@ Avec initialisation de la variable globale à 434.
 
 ## Question a :
 
-## Question b :
+Il y a un mélange d'affichage car, on a crée le fichier "sharedFile" après le fork, ainsi les 2 processus accèdent au même fichier, en ecriture.
+L'OS donne la main aléatoirement aux processus ce qui peut donner lieux à des mélanges (l'un ecrit et sans avoir fini, l'autre écrit), comme ci-dessous :
+
+    ./forkShared
+
+    Je suis le peeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere !![56757:999]
+    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaant !![56758:976]
 
 # Exercice 4, Fichier Partagé et synchronisation :
 
 ## Question a :
+
+## Question b :
