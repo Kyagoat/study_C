@@ -75,3 +75,7 @@ Non, il n'y a plus de mélanges. Le processus parent attend que le processus enf
 ## Question b :
 
 Oui, les affichages des deux processus apparaissent dans le fichier. Le processus enfant ouvre le fichier en mode "w" ce qui écrase tout contenu existant. Ensuite, le processus parent ouvre le fichier en mode "a" après que l'enfant a terminé d'écrire.
+
+# Question Bonus
+
+L'affichage n'apparaît jamais car execlp donne la main à un autre processus ici "ps" et par conséquent se n'est plus l'enfant qui à la main.
