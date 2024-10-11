@@ -11,35 +11,32 @@ void parent(void);
 void enfant(void);
 
 
-int main(void)
-{
-  pid_t id;
-  id = fork();
-  FILE* sharedFile = fopen("./sharedFile.txt","a");
+int main(void) {
 
-  switch (id) {
-     case -1:
-        perror("fork");
-        return errno;
+   pid_t id;
+   id = fork();
 
-     case 0:
-        for (int i = 0; i < 50; i++) {
-            fprintf(sharedFile, "%d - Je suis l'enfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaant !!\n",i);
-            fflush(sharedFile);
-            }
-        return EXIT_SUCCESS;  
-        break;
+   switch (id) {
+      case -1:
+      perror("fork");
+      return errno;
 
-     default:
-        wait(NULL);
-        usleep(100);
-        for (int i = 0; i < 50; i++) {
-            fprintf(sharedFile, "%d - Je suis le peeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere !!\n",i);
-            fflush(sharedFile);
-        }
-    }
+      case 0:
+      FILE* sharedFile1 = fopen("./sharedFile.txt","w");
+      for (int i = 0; i < 50; i++) {
+         fprintf(sharedFile1, "%d - Je suis l'enfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaant !!\n",i);
+         fflush(sharedFile1);
+         }
+      return EXIT_SUCCESS;  
+      break;
+
+      default:
+      FILE* sharedFile = fopen("./sharedFile.txt","a");
+      wait(NULL);
+      for (int i = 0; i < 50; i++) {
+         fprintf(sharedFile, "%d - Je suis le peeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere !!\n",i);
+         fflush(sharedFile);
+      }
+   }
   return EXIT_SUCCESS;
 }
-
-
-

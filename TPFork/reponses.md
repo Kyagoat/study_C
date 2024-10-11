@@ -70,6 +70,8 @@ Une fois l'enfant crée il accède au même fichier (qui a été stocké en mém
 
 ## Question a :
 
-Non, il n'y a plus de mélanges.
+Non, il n'y a plus de mélanges. Le processus parent attend que le processus enfant se termine avant de commencer ses propres affichages.
 
 ## Question b :
+
+Oui, les affichages des deux processus apparaissent dans le fichier. Le processus enfant ouvre le fichier en mode "w" ce qui écrase tout contenu existant. Ensuite, le processus parent ouvre le fichier en mode "a" après que l'enfant a terminé d'écrire.
