@@ -10,7 +10,6 @@ extern int errno;
 void parent(void);
 void enfant(void);
 
-
 int main(void) {
 
    pid_t id;
