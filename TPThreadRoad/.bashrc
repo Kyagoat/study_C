@@ -1,0 +1,1 @@
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/users/but/info/Public/Systeme/onTheRoad/"
