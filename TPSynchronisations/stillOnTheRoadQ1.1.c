@@ -94,8 +94,6 @@ void* car_thread(void* rid)
         }
     }
 
-    
-
    road_removeCar(car_id);
 
    return NULL;

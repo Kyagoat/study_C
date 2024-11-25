@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <stdlib.h> // For rand
 #include <semaphore.h> 
+#include <stdio.h>
 
 #include "road.h"
 
@@ -71,6 +72,7 @@ void* create_cars(void* unused) {
 
 // Function that create a car and make it move until it reaches the end of the road
 void* car_thread(void* rid) {
+
     int road_id = *((int*) rid);
     int car_id = road_addCar(road_id);
 
@@ -79,29 +81,26 @@ void* car_thread(void* rid) {
         if (road_distToCross(car_id) <= road_minDist){
             pthread_mutex_lock(&mut);
             while(road_distToCross(car_id) <= road_minDist){
-                road_stepCar(car_id);
+                road_validate(car_id);
                 usleep(3000);
             }
             pthread_mutex_unlock(&mut);
         }
-        else if(road_validate(car_id) == -1){
-           usleep(3000);
-        }
         else{
-           road_stepCar(car_id);
+           usleep(3000);
+           road_validate(car_id);
         }
-        break;
     }
    road_removeCar(car_id);
    return NULL;
 }
 
 int road_validate(int car) {
-   if(road_distNextCar(car) <= INT_MAX){
-      return 0;
+   if(road_distNextCar(car) != -1 && 0 < road_distNextCar(car) && road_distNextCar(car) < 50){
+      return 1;
    }
-   else {
-      return -1;
+   if (road_stepCar(car) == 0){
+      return 0;
    }
    return 1;
 }
