@@ -47,6 +47,9 @@ void* create_cars(void* param) {
 // ----------   MAIN   ----------- 
 
 int main(int argc, const char *argv[]){
+   char port_ecoute = atoi(argv[1]);
+   char port_connexion = atoi(argv[2]);
+
    pthread_t th;
 
    road_init(0);
