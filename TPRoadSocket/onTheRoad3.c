@@ -1,12 +1,3 @@
-/* ---------------------------------------------------------------------------
- * Programme affichant une voiture qui parcours une route
- * Auteur(s)  : 
- * Groupe TP  : 
- * Entrées    : Aucune
- * Sorties    : Affichage d'une fenêtre graphique
- * Avancement : <Où en êtes vous ? Qu'est-ce qui fonctionne ?>
- */
-
 #include "road.h"
 
 #define _GNU_SOURCE  // For pthread_tryjoin_np
@@ -15,54 +6,52 @@
 #include <errno.h>   // For EBUSY
 #include <stdlib.h>  // For EXIT_FAILURE
 #include <stdio.h>   // Just in case
+#include <Reseau.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#define PORT 4321 //macro
 
 void* car_thread(void* param) {
    int carId = road_addCar(0);
-
    while (road_stepCar(carId)){
       usleep(10000);
    }
-   
    road_removeCar(carId);
 }
 
 
 void* create_cars(void* param) {
-
    pthread_t th;
-
-   for (int i = 0; i < 6; i++){
-
-      if (pthread_create(&th, NULL, car_thread, NULL) != 0){
-         fprintf(stderr,"erreur de création");
+   int server_socket;
+   server_socket = socketServer(PORT, TCP);
+   while (!road_isEscPressed()){
+      if (accept(server_socket, NULL, NULL)){
+         for (int i = 0; i < 6; i++){
+            if (pthread_create(&th, NULL, car_thread, NULL) != 0){
+               fprintf(stderr,"erreur de création");
+            }
+            sleep(1);
+         }
       }
-
-      sleep(1);
    }
-
    pthread_join(th, NULL);
 }
-
 
 // ----------   MAIN   ----------- 
 
 int main(int argc, const char *argv[]){
    char port_ecoute = atoi(argv[1]);
    char port_connexion = atoi(argv[2]);
-
    pthread_t th;
-
    road_init(0);
-
    if (pthread_create(&th, NULL, create_cars, NULL) != 0){
       fprintf(stderr,"erreur de création");
    }
-   
    while (!road_isEscPressed() && pthread_tryjoin_np(th, NULL) != 0) {
       usleep(1000);
       road_refresh();
    }
-
    road_shutdown();
    return 0;
 }
