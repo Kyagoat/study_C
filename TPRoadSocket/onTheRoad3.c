@@ -6,9 +6,10 @@
 #include <errno.h>   // For EBUSY
 #include <stdlib.h>  // For EXIT_FAILURE
 #include <stdio.h>   // Just in case
-#include <Reseau.h>
+
 #include <sys/types.h>
 #include <sys/socket.h>
+#include "Reseau.h"
 
 #define PORT 4321 //macro
 
@@ -22,12 +23,16 @@ void* car_thread(void* param) {
 
 
 void* create_cars(void* param) {
+   printf("debut");
    pthread_t th;
    int server_socket;
    server_socket = socketServer(PORT, TCP);
    while (!road_isEscPressed()){
+   printf("boucle while");
       if (accept(server_socket, NULL, NULL)){
+         printf("if condition");
          for (int i = 0; i < 6; i++){
+            printf("boucle for");
             if (pthread_create(&th, NULL, car_thread, NULL) != 0){
                fprintf(stderr,"erreur de création");
             }
@@ -40,7 +45,8 @@ void* create_cars(void* param) {
 
 // ----------   MAIN   ----------- 
 
-int main(int argc, const char *argv[]){
+int main(int argc, const char* argv[]){
+   printf("main");
    char port_ecoute = atoi(argv[1]);
    char port_connexion = atoi(argv[2]);
    pthread_t th;
