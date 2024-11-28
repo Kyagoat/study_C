@@ -1,126 +1,140 @@
 #define _GNU_SOURCE
+
 #include <unistd.h> // For usleep
 #include <pthread.h>
 #include <errno.h>
 #include <stdlib.h> // For rand
 #include <semaphore.h>
 #include <stdio.h>
-
 #include "road.h"
+#include <stdbool.h>
+#include <time.h>
 
-pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+void *car_thread(void *rid);
+void *switchLanes();
+void *create_cars(void *unused);
+bool safeStepCar(int id);
 
-void* car_thread(void* rid);
-void* create_cars(void* unused);
-int road_validate(int car);
-void *switchLanes(void *sem);
-
-sem_t sem_lane_1;
-sem_t sem_lane_2;
+pthread_mutex_t haut = PTHREAD_MUTEX_INITIALIZER;
+sem_t semaphoreTopLane;
+sem_t semaphoreBottomLane;
+int MAX_PASSAGE = 3;
 
 int main(int argc, const char *argv[]) {
-   sem_init(&sem_lane_1, 0, 1);
-   sem_init(&sem_lane_2, 0, 0);
+    srand(time(NULL));
 
-   pthread_t switch_thread;
-   if(pthread_create(&switch_thread, NULL, switchLanes, NULL) != 0){
-      fprintf(stderr, "Erreur lors de la création du thread de gestion des voies. \n");
-      return EXIT_FAILURE;
-   }
+    road_init(1);
 
-   pthread_t cars_thread;
-   if (pthread_create(&cars_thread, NULL, car_thread, NULL) != 0){
-      fprintf(stderr,"Erreur lors de la création du thread des voitures");
-      return EXIT_FAILURE;
-   }
+    pthread_t create_cars_thread;
+    pthread_create(&create_cars_thread, NULL, create_cars, NULL);
 
-   pthread_join(cars_thread, NULL);
-   pthread_join(switch_thread, NULL);
+    pthread_t th_switchLanes;
+    pthread_create(&th_switchLanes, NULL, switchLanes, NULL);
 
-   road_shutdown();
-   sem_destroy(&sem_lane_1);
-   sem_destroy(&sem_lane_2);
-   return 0;
+    sem_init(&semaphoreTopLane, 0, MAX_PASSAGE);
+    sem_init(&semaphoreBottomLane, 0, 0);
+
+    while (!road_isEscPressed() && pthread_tryjoin_np(create_cars_thread, NULL) == EBUSY) {
+        usleep(1000);
+        road_refresh();
+    }
+
+    road_shutdown();
+
+    return 0;
 }
 
 void *create_cars(void *unused) {
-   road_init(1);
-   pthread_t car_thread_id = NULL;
-   int delay = 0;
+    const int nb_cars = 300;
+    pthread_t car_threads[nb_cars];
+    int road_ids[nb_cars];
+    const int minDelay = 300000;
+    int delay;
 
-   while (!road_isEscPressed()){
-      road_refresh();
-      usleep(1);
+    for (int i = 0; i < nb_cars; i++) {
+        delay = minDelay + rand() % minDelay;
+        usleep(delay);
+        road_ids[i] = 0;
+        if (rand() < RAND_MAX / 2) {
+            road_ids[i] = 1;
+        }
+        pthread_create(&car_threads[i], NULL, car_thread, &road_ids[i]);
+    }
 
-      if (delay++ >= 1000%rand() || car_thread_id == NULL){
-         for (int i = 0; i < 10; i++) {
-            if (pthread_create(&car_thread_id, NULL, car_thread, NULL) != 0){
-               fprintf(stderr,"Erreur lors de la création du thread des voitures");
-               return EXIT_FAILURE;
-            }
-         usleep(100);
-      }
-      delay = 0;
-   }
+    for (size_t i = 0; i < nb_cars; i++) {
+        pthread_join(car_threads[i], NULL);
+    }
 
-   while(1){
-      road_refresh();
-      usleep(1);
-      if (pthread_tryjoin_np(car_thread_id, NULL) == 0){
-         break;
-      }
-   }
-   }
-   pthread_exit(NULL);
+    return NULL;
 }
 
 void *car_thread(void *rid) {
-    int road_id = *((int*) rid);
+    int speed = 1 * 1000;
+    int road_id = *((int *)rid);
     int car_id = road_addCar(road_id);
-    int lane = rand()%2;
 
-    sem_t *current_lane = (lane ==0) ? &sem_lane_1 : &sem_lane_2;
-
-    while(1){
-        usleep(3000);
-        if (road_distToCross(car_id) <= road_minDist){
-            sem_wait(current_lane);
-            while(road_distToCross(car_id) <= road_minDist){
-                road_stepCar(car_id);
-                usleep(3000);
-            }
-            sem_post(current_lane);
-        }
-        else{
-           if (road_stepCar(car_id) ==0){break;}
-           usleep(3000);
-           road_stepCar(car_id);
-        }
+    while (road_distToCross(car_id) > road_minDist) {
+        safeStepCar(car_id);
+        usleep(speed);
     }
-   road_removeCar(car_id);
-   pthread_exit(NULL);
-   return NULL;
+
+    if (road_id == 0) {
+        sem_wait(&semaphoreTopLane);
+    } else {
+        sem_wait(&semaphoreBottomLane);
+    }
+
+    while (road_distToCross(car_id) < INT_MAX) {
+        safeStepCar(car_id);
+        usleep(speed);
+    }
+
+    if (road_id == 0) {
+        sem_post(&semaphoreTopLane);
+    } else {
+        sem_post(&semaphoreBottomLane);
+    }
+
+    while (safeStepCar(car_id)) {
+        usleep(speed);
+    }
+
+    road_removeCar(car_id);
+
+    return NULL;
 }
 
-int road_validate(int car) {
-   if(road_distNextCar(car) != -1 && 0 < road_distNextCar(car) && road_distNextCar(car) < 50){
-      return 1;
-   }
-   if (road_stepCar(car) == 0){
-      return 0;
-   }
-   return 1;
+bool safeStepCar(int id) {
+    if (road_distNextCar(id) > road_minDist) {
+        return road_stepCar(id);
+    }
+    return true;
 }
 
-void* switchLanes(void *sem){
-   while (!road_isEscPressed()){
-      sem_wait(&sem_lane_1);
-      sem_post(&sem_lane_2);
-      usleep(3000);
+void *switchLanes() {
+    bool up = false;
+    int bottomValue;
+    int topValue;
+    while (true) {
+        if (up) {
+            for (int i = 0; i < MAX_PASSAGE; i++) {
+                sem_wait(&semaphoreBottomLane);
+            }
+            for (int i = 0; i < MAX_PASSAGE; i++) {
+                sem_post(&semaphoreTopLane);
+            }
+        } else {
+            for (int i = 0; i < MAX_PASSAGE; i++) {
+                sem_wait(&semaphoreTopLane);
+            }
+            for (int i = 0; i < MAX_PASSAGE; i++) {
+                sem_post(&semaphoreBottomLane);
+            }
+        }
 
-      sem_wait(&sem_lane_2);
-      sem_post(&sem_lane_1);
-      usleep(3000);
-   }
-   pthread_exit(NULL);
+        sem_getvalue(&semaphoreTopLane, &topValue);
+        sem_getvalue(&semaphoreBottomLane, &bottomValue);
+        up = !up;
+        sleep(2);
+    }
 }
