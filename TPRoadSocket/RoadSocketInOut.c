@@ -65,6 +65,7 @@ void* create_cars(void* param) {
       send(sockfd, buffer, strlen(buffer), 0);
       printf("Message envoyé : %s\n", buffer);
 
+
       // Fermer le socket
       close(sockfd);
    }
