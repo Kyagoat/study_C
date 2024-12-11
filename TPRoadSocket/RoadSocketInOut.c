@@ -27,15 +27,15 @@ void* create_cars(void* param) {
 
    int client_socket, serveur_socket;
 
-
-   int* ports = (int*)param;
-   int port = ports[0];       // Port principal
-   int port_ecoute = ports[1];
+   void** params = (void**)param;
+   int portServeur = *(int*)params[0];
+   char* nomClient = (char*)params[1];
+   int portClient = *(int*)params[2];
 
    road_init(1);
    pthread_t th;
 
-   serveur_socket = socketServer(port, TCP);
+   serveur_socket = socketServer(portServeur, TCP);
    while (!road_isEscPressed()){
       road_refresh();
       client_socket = accept(serveur_socket, NULL, NULL);
@@ -54,12 +54,12 @@ void* create_cars(void* param) {
    }
    // création nouveau client
    char buffer[1024];
-   int sockfd = socketClient("localhost", port_ecoute,TCP);
+   int sockfd = socketClient(nomClient, portClient,TCP);
    if (sockfd < 0) {
-      fprintf(stderr, "Erreur de connexion au serveur sur le port %d\n", port_ecoute);
+      fprintf(stderr, "Erreur de connexion au serveur sur le port %d\n", portClient);
    }
    else {
-      printf("Connecté au serveur sur le port %d\n", port_ecoute);
+      printf("Connecté au serveur sur le port %d\n", portClient);
 
       snprintf(buffer, 1024, "La voiture est arrivée au bout de la route\n");
       send(sockfd, buffer, strlen(buffer), 0);
@@ -77,14 +77,18 @@ void* create_cars(void* param) {
 int main(int argc, const char* argv[]){
 
    int port = atoi(argv[1]);
-   int port_ecoute = atoi(argv[2]);
+   char* nomClient = (char*)argv[2];
+   int port_ecoute = atoi(argv[3]);
 
    pthread_t th;
 
    // Passage des ports comme paramètres au thread
-   int ports[2] = {port, port_ecoute};
+   void* arguments[3];
+   arguments[0]=&port;
+   arguments[1]=nomClient;
+   arguments[2]=&port_ecoute;
 
-   if (pthread_create(&th, NULL, create_cars, (void*)ports) != 0){
+   if (pthread_create(&th, NULL, create_cars, (void*)arguments) != 0){
       fprintf(stderr,"erreur de création");
    }
 
